@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  postgres:
+    env_file:
+      - .env
+    image: postgres
+    restart: on-failure
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres-ms-finance-data:/var/lib/postgresql/data
+    networks:
+      - ms-finance-network
+
+  pgadmin:
+    env_file:
+      - .env
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    ports:
+      - 16543:80
+    depends_on:
+      - postgres
+    networks:
+      - ms-finance-network
+
+  api:
+    build: .
+    command: yarn start:${API_START_ARG}
+    restart: on-failure
+    ports:
+      - ${API_SERVER_PORT}:${API_SERVER_PORT}
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+    networks:
+      - ms-finance-network
+
+volumes:
+  postgres-ms-finance-data:
+    driver: local
+networks:
+  ms-finance-network:
