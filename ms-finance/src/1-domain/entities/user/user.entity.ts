@@ -26,4 +26,4 @@ class UserEntity extends AbstractEntity<IUserEntity> {
   }
 }
 
-export { UserEntity };
+export { UserEntity, IUserEntity, InputUserEntity };
