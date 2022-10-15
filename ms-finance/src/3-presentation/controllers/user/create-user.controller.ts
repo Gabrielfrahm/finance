@@ -1,3 +1,4 @@
+import { UsersErrors } from '@/2-business/errors';
 import {
   IInputCreateUserDto,
   IOutputCreateUserDto,
@@ -16,7 +17,7 @@ export class CreateUserController extends AbstractController<
 
   public async run(input: IInputCreateUserDto): Promise<IOutputCreateUserDto> {
     if (input.password !== input.passwordConfirmation) {
-      console.log('error password');
+      return left(UsersErrors.userPasswordConfirmationDoesNotMatch());
     }
 
     const userResult = await this.createUserUseCase.exec({

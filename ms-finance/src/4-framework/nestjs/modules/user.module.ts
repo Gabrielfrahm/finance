@@ -1,6 +1,7 @@
 import { CreateUserUseCase } from '@/2-business/usecases';
 import { CreateUserController } from '@/3-presentation/controllers';
 import { UserRepository } from '@/4-framework/repositories';
+import { HasherService } from '@/4-framework/services/hasher/hasher.service';
 import { UserModel } from '@/4-framework/typeorm/models';
 import { Module } from '@nestjs/common';
 import { getDataSourceToken } from '@nestjs/typeorm';
@@ -19,11 +20,20 @@ import { UserRoutes } from '../../rest/routes/user.routes';
       inject: [getDataSourceToken()],
     },
     {
-      provide: CreateUserUseCase,
-      useFactory: (userRepository: UserRepository) => {
-        return new CreateUserUseCase(userRepository);
+      provide: HasherService,
+      useFactory: () => {
+        return new HasherService();
       },
-      inject: [UserRepository],
+    },
+    {
+      provide: CreateUserUseCase,
+      useFactory: (
+        userRepository: UserRepository,
+        hasherService: HasherService,
+      ) => {
+        return new CreateUserUseCase(userRepository, hasherService);
+      },
+      inject: [UserRepository, HasherService],
     },
     {
       provide: CreateUserController,
