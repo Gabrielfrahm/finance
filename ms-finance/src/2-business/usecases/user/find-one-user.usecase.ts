@@ -15,7 +15,6 @@ class FindOneUserUseCase
   public async exec(
     input: IInputFindOneUserDto,
   ): Promise<IOutputFindOneUserDto> {
-    console.log('input', input);
     const user = await this.userRepository.findOneBy({
       columns: input.keys,
       values: input.values,

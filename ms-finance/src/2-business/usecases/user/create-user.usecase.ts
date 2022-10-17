@@ -32,7 +32,6 @@ export class CreateUserUseCase
       const userEntity = await this.userRepository.create(user);
       return right(userEntity);
     } catch (error) {
-      console.log(error);
       return left(UsersErrors.entityCreationError());
     }
   }

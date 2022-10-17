@@ -1,5 +1,9 @@
 import { IUserEntity } from '@/1-domain/entities';
-import { IInputFindOneUser, IUserRepository } from '@/2-business/repositories';
+import {
+  IInputFindOneUser,
+  IPagination,
+  IUserRepository,
+} from '@/2-business/repositories';
 import { concatArraysIntoObject } from '@/shared/utils';
 
 import { Repository } from 'typeorm';
@@ -31,5 +35,11 @@ export class UserRepository implements IUserRepository {
       return;
     }
     return user;
+  }
+
+  public async findAll(pagination?: IPagination): Promise<IUserEntity[]> {
+    return this.user.find({
+      ...pagination,
+    });
   }
 }

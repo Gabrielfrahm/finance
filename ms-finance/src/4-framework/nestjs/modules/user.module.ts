@@ -1,9 +1,11 @@
 import { CreateUserUseCase } from '@/2-business/usecases';
+import { FindAllUserUseCase } from '@/2-business/usecases/user/find-all-user.usecase';
 import { FindOneUserUseCase } from '@/2-business/usecases/user/find-one-user.usecase';
 import {
   CreateUserController,
   FindOneByUserController,
 } from '@/3-presentation/controllers';
+import { FindAllUserController } from '@/3-presentation/controllers/user/find-all-users.controller';
 import { UserRepository } from '@/4-framework/repositories';
 import { HasherService } from '@/4-framework/services/hasher/hasher.service';
 import { UserModel } from '@/4-framework/typeorm/models';
@@ -47,6 +49,13 @@ import { UserRoutes } from '../../rest/routes/user.routes';
       inject: [UserRepository],
     },
     {
+      provide: FindAllUserUseCase,
+      useFactory: (userRepository: UserRepository) => {
+        return new FindAllUserUseCase(userRepository);
+      },
+      inject: [UserRepository],
+    },
+    {
       provide: CreateUserController,
       useFactory: (
         createUserUseCase: CreateUserUseCase,
@@ -62,6 +71,13 @@ import { UserRoutes } from '../../rest/routes/user.routes';
         return new FindOneByUserController(findOneUserUseCase);
       },
       inject: [FindOneUserUseCase],
+    },
+    {
+      provide: FindAllUserController,
+      useFactory: (findAllUserUseCase: FindAllUserUseCase) => {
+        return new FindAllUserController(findAllUserUseCase);
+      },
+      inject: [FindAllUserUseCase],
     },
   ],
 })
