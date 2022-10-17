@@ -2,6 +2,7 @@ import { IUserEntity } from '@/1-domain/entities';
 import {
   IInputFindOneUser,
   IPagination,
+  IResponseAllUser,
   IUserRepository,
 } from '@/2-business/repositories';
 import { concatArraysIntoObject } from '@/shared/utils';
@@ -37,9 +38,32 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  public async findAll(pagination?: IPagination): Promise<IUserEntity[]> {
-    return this.user.find({
-      ...pagination,
-    });
+  public async findAll(pagination?: IPagination): Promise<IResponseAllUser> {
+    const page = pagination.page || 1;
+    const take = pagination.take || 5;
+    const userQuery = await this.user
+      .createQueryBuilder('user')
+      .skip((page - 1) * take)
+      .take(take);
+
+    const itemCount = await userQuery.getCount();
+    const { entities } = await userQuery.getRawAndEntities();
+    const pageCount = Math.ceil(itemCount / take);
+    const hasPreviousPage = page > 1;
+    const hasNextPage = page < pageCount;
+
+    const meta = {
+      page: page,
+      take: take,
+      itemCount,
+      pageCount: Math.ceil(itemCount / take),
+      hasPreviousPage,
+      hasNextPage,
+    };
+
+    return {
+      data: entities,
+      meta,
+    };
   }
 }

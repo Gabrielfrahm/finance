@@ -8,6 +8,7 @@ import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { FindAllUserController } from '@/3-presentation/controllers/user/find-all-users.controller';
+import { IPagination } from '@/2-business/repositories';
 
 @Controller('users')
 export class UserRoutes {
@@ -31,14 +32,7 @@ export class UserRoutes {
   }
 
   @Get('')
-  public async index(
-    @Query('take') take: number,
-    @Query('skip') skip: number,
-    @Res() res: Response,
-  ) {
-    return restRouteAdapter(this.findAllUserController)(
-      { pagination: { skip, take } },
-      res,
-    );
+  public async index(@Query() pagination: IPagination, @Res() res: Response) {
+    return restRouteAdapter(this.findAllUserController)({ pagination }, res);
   }
 }
