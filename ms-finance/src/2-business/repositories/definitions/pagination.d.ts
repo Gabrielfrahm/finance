@@ -2,6 +2,7 @@ interface IPagination {
   take: number;
   skip: number;
   page: number;
+  order: 'ASC' | 'DESC';
 }
 
 interface IMeta {

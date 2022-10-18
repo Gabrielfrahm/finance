@@ -4,11 +4,24 @@ import {
   FindOneByUserController,
 } from '@/3-presentation/controllers';
 import { restRouteAdapter } from '@/4-framework/adapters';
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 
 import { FindAllUserController } from '@/3-presentation/controllers/user/find-all-users.controller';
 import { IPagination } from '@/2-business/repositories';
+import { IUserEntity } from '@/1-domain/entities';
+import { UpdateUserController } from '@/3-presentation/controllers/user/update-user.controller';
+import { DeleteUserController } from '@/3-presentation/controllers/user/delete-user.controller';
 
 @Controller('users')
 export class UserRoutes {
@@ -16,6 +29,8 @@ export class UserRoutes {
     private readonly createUserController: CreateUserController,
     private readonly findOneByUserController: FindOneByUserController,
     private readonly findAllUserController: FindAllUserController,
+    private readonly updateUserController: UpdateUserController,
+    private readonly deleteUserController: DeleteUserController,
   ) {}
 
   @Post('')
@@ -34,5 +49,21 @@ export class UserRoutes {
   @Get('')
   public async index(@Query() pagination: IPagination, @Res() res: Response) {
     return restRouteAdapter(this.findAllUserController)({ pagination }, res);
+  }
+
+  @Put('/:id')
+  public async update(
+    @Param() id: { id: string },
+    @Body() body: Partial<IUserEntity>,
+    @Res() res: Response,
+  ) {
+    return restRouteAdapter(this.updateUserController)(
+      { id: id.id, newData: body },
+      res,
+    );
+  }
+  @Delete('/:id')
+  public async delete(@Param() id: { id: string }, @Res() res: Response) {
+    return restRouteAdapter(this.deleteUserController)({ id: id.id }, res);
   }
 }

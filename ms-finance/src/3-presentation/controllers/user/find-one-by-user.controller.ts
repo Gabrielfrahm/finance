@@ -17,7 +17,6 @@ class FindOneByUserController extends AbstractController<
   public async run(
     inputFindOneByUser: IInputFindOneUserDto,
   ): Promise<IOutputFindOneUserDto> {
-    console.log('inputFindOneByUser', inputFindOneByUser);
     const user = await this.findOneUserUseCase.exec({
       keys: inputFindOneByUser.keys,
       values: inputFindOneByUser.values,

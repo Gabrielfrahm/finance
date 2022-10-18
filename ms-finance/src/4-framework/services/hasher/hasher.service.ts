@@ -1,5 +1,5 @@
 import { IHasherService } from '@/2-business/services';
-import bcrypt, { genSalt, hash } from 'bcrypt';
+import { genSalt, hash, compare } from 'bcrypt';
 
 class HasherService implements IHasherService {
   public async create(s: string): Promise<string> {
@@ -9,7 +9,7 @@ class HasherService implements IHasherService {
   }
 
   public async compare(value: string, hashed: string): Promise<boolean> {
-    return bcrypt.compare(value, hashed);
+    return compare(value, hashed);
   }
 }
 

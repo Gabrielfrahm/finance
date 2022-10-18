@@ -40,9 +40,11 @@ export class UserRepository implements IUserRepository {
 
   public async findAll(pagination?: IPagination): Promise<IResponseAllUser> {
     const page = pagination.page || 1;
-    const take = pagination.take || 5;
+    const take = pagination.take || 10;
+    const order = pagination.order || 'ASC';
     const userQuery = await this.user
       .createQueryBuilder('user')
+      .orderBy('user.created_at', order)
       .skip((page - 1) * take)
       .take(take);
 
@@ -65,5 +67,27 @@ export class UserRepository implements IUserRepository {
       data: entities,
       meta,
     };
+  }
+
+  public async update(
+    id: string,
+    newData: Partial<IUserEntity>,
+  ): Promise<IUserEntity> {
+    const user = await this.user
+      .createQueryBuilder('user')
+      .update()
+      .set({ ...newData })
+      .where('id = :id', { id })
+      .execute();
+
+    return user.raw[0];
+  }
+
+  public async delete(id: string): Promise<void> {
+    await this.user
+      .createQueryBuilder('user')
+      .delete()
+      .where('id = :id', { id })
+      .execute();
   }
 }

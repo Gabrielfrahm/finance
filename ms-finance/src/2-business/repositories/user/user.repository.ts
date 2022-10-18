@@ -17,6 +17,8 @@ interface IUserRepository {
   create(inputUserEntity: Omit<IUserEntity, 'id'>): Promise<IUserEntity>;
   findOneBy(inputFindUser: IInputFindOneUser): Promise<IUserEntity | void>;
   findAll(pagination?: IPagination): Promise<IResponseAllUser>;
+  update(id: string, newData: Partial<IUserEntity>): Promise<IUserEntity>;
+  delete(id: string): Promise<void>;
 }
 
 export {
