@@ -52,30 +52,4 @@ export class AuthenticationErrors extends IError {
 
     return authenticationError;
   }
-
-  public static notPossibleValidAccountGoogle(): IError {
-    const authenticationError = new AuthenticationErrors({
-      code: 500,
-      body: {
-        code: 'AE-005',
-        message: 'Unable to validate your Google account!',
-        shortMessage: 'notPossibleValidAccountGoogleError',
-      },
-    });
-
-    return authenticationError;
-  }
-
-  public static notValidAccountGoogle(): IError {
-    const authenticationError = new AuthenticationErrors({
-      code: 500,
-      body: {
-        code: 'AE-006',
-        message: 'Your Google account does not validate!',
-        shortMessage: 'notValidAccountGoogleError',
-      },
-    });
-
-    return authenticationError;
-  }
 }
