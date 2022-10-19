@@ -7,7 +7,6 @@ import {
   IOutputAuthenticationDto,
 } from '@/2-business/types/authentication/create-token.dto';
 import { left, right } from '@/shared/either';
-import { find } from 'rxjs';
 import { IAbstractUseCase } from '../abstract.usecase';
 
 class CreateTokenUseCase
@@ -42,8 +41,9 @@ class CreateTokenUseCase
       }
 
       const result = await this.authenticatorService.sign(input);
+      delete findUser.password;
 
-      return right({ token: result.token });
+      return right({ user: findUser, token: result.token });
     } catch (error) {
       console.log(error);
       return left(AuthenticationErrors.tokenCreationError());
