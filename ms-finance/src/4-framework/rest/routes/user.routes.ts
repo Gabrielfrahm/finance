@@ -13,9 +13,10 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import { FindAllUserController } from '@/3-presentation/controllers/user/find-all-users.controller';
 import { IPagination } from '@/2-business/repositories';
@@ -47,8 +48,21 @@ export class UserRoutes {
   }
 
   @Get('')
-  public async index(@Query() pagination: IPagination, @Res() res: Response) {
-    return restRouteAdapter(this.findAllUserController)({ pagination }, res);
+  public async index(
+    @Query() pagination: IPagination,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    return restRouteAdapter(this.findAllUserController)(
+      { pagination },
+      res,
+      {
+        login: false,
+        protect: true,
+        status: 200,
+      },
+      req,
+    );
   }
 
   @Put('/:id')

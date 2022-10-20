@@ -1,8 +1,8 @@
 import { AbstractController } from '@/3-presentation/controllers';
 import { Either } from '@/shared/either';
 import { IError } from '@/shared/error';
-import accessTokenCookieOptions from '@/shared/utils/cookies.util';
 import { Request, Response } from 'express';
+import { verify } from 'jsonwebtoken';
 
 type Params = {
   status: number;
@@ -21,20 +21,24 @@ export const restRouteAdapter =
     let opResult;
     if (!params.protect) opResult = await controller.run(body);
     else {
-      opResult = await controller.run(body, req!.cookies['accessToken']);
+      if (!req.headers.authorization) {
+        return res.status(401).json({
+          message: 'JWT token is Missing',
+        });
+      }
+      const [, token] = req.headers.authorization.split(' ');
+      try {
+        verify(token, process.env.SECRET_TOKEN as string);
+        opResult = await controller.run(body, token);
+      } catch (error) {
+        return res.status(401).json({
+          message: 'invalid JWT token',
+        });
+      }
     }
 
     if (opResult?.isRight()) {
-      if (!params.login) {
-        return res.status(params.status).send(opResult.value);
-      } else {
-        res.cookie(
-          'accessToken',
-          opResult.value.token,
-          accessTokenCookieOptions,
-        );
-        return res.redirect(process.env.ORIGIN as string);
-      }
+      return res.status(params.status).send(opResult.value);
     } else if (opResult?.isLeft()) {
       return res.status(opResult.value?.code || 500).send(opResult.value?.body);
     }
