@@ -40,7 +40,10 @@ class CreateTokenUseCase
         return left(AuthenticationErrors.invalidCredentials());
       }
 
-      const result = await this.authenticatorService.sign(input);
+      const result = await this.authenticatorService.sign({
+        id: findUser.id,
+        email: input.email,
+      });
       delete findUser.password;
 
       return right({ user: findUser, token: result.token });

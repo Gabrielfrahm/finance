@@ -8,7 +8,7 @@ export interface IInputVerifyAuthenticateDTO {
 export type IOutputVerifyAuthenticateDTO = Either<
   IError,
   {
+    id: string;
     email: string;
-    password: string;
   }
 >;
